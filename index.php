@@ -1,3 +1,5 @@
 <?php
 
-echo "Glory to God!";
+use SF\Signmaker\Signmaker;
+
+Signmaker::handle();
