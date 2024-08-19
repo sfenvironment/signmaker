@@ -1,0 +1,22 @@
+{
+	"name": "sf/signmaker",
+	"version": "0.0.1",
+	"description": "PHP application for generating refuse signs from configuration",
+	"homepage": "https://git.fivepaths.com/sf/signmaker",
+	"type": "library",
+	"license": "GPL",
+	"authors": [
+		{
+			"name": "Tyler Brown Cifu Shuster",
+			"email": "tyler@fivepaths.com"
+		}
+	],
+	"require": {
+		"php": ">=7.3"
+	},
+	"autoload": {
+		"psr-4": {
+			"SF\\Signmaker\\": "src/"
+		}
+	}
+}
