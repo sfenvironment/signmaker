@@ -3,22 +3,48 @@
 namespace SF\Signmaker;
 
 use Dompdf\Dompdf;
+use Dompdf\Options;
 
 class Signmaker {
   public static function handle() {
     $configuration = static::getConfiguration();
     $output = '';
+    [$top, $right, $bottom, $left] = $configuration['bbox'];
     ob_start(); ?>
-    <html>
+      <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+              "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+      <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en"
     <head>
-        <link rel="stylesheet" href="<?php echo $configuration['root']; ?>/assets/css/style.css" >
+        <link rel="stylesheet" type="text/css" href="<?php echo $configuration['root']; ?>/assets/css/style.css" >
+        <?php foreach ($configuration['stylesheets'] as $stylesheet): ?>
+            <link rel="stylesheet" type="text/css" href="<?php echo $stylesheet; ?>">
+        <?php endforeach; ?>
         <script src="<?php echo $configuration['root']; ?>/assets/js/signmaker.js"></script>
         <style>
             #image-region {
-                top: <?php echo $configuration['bbox'][0]; ?>%;
-                right: <?php echo 100 - $configuration['bbox'][1]; ?>%;
-                bottom: <?php echo 100 - $configuration['bbox'][2]; ?>%;
-                left: <?php echo $configuration['bbox'][3]; ?>%;
+                top: <?php echo (($top / 100) * 8.5); ?>in;
+                right: <?php echo ((1 - $right / 100) * 8.5); ?>in;
+                bottom: <?php echo ((1 - $bottom / 100) * 8.5); ?>in;
+                left: <?php echo (($left / 100) * 8.5); ?>in;
+            }
+
+            #image-region.children-1 .row,
+            #image-region.children-2 .row,
+            #image-region.children-3 .row,
+            #image-region.children-4 .row {
+                height: <?php echo 8.5 * (($bottom - $top) / 100); ?>in;
+            }
+            .row-2 {
+                top: calc(<?php echo (8.5 * (($bottom - $top) / 100)) / 2; ?>in + 1px);
+                height: <?php echo (8.5 * (($bottom - $top) / 100)) / 2; ?>in;
+                position: absolute;
+                left: 0;
+            }
+            #image-region.children-5 span,
+            #image-region.children-6 span,
+            #image-region.children-7 span,
+            #image-region.children-8 span {
+                height: <?php echo (8.5 * (($bottom - $top) / 100)) / 2; ?>in;
             }
         </style>
         <script>
@@ -28,12 +54,16 @@ class Signmaker {
     <body>
     <main id="sign">
         <img id="background" src="<?php echo $configuration['directory'] . $configuration['background']; ?>" />
-        <ul id="image-region"></ul>
+        <div id="image-region"></div>
     </main>
     <aside>
-        <h1>Signmaker</h1>
+        <span class="instruction"><span class="number">1.</span>Select items to make your sign</span>
         <ul id="image-menu"></ul>
-        <button id="generate">Save PDF</button>
+        <span class="instruction"><span class="number">2.</span>Start over or save your sign</span>
+        <fieldset>
+            <button id="reset">Start Over</button>
+            <button id="generate">Save PDF</button>
+        </fieldset>
     </aside>
     </body>
     </html>
@@ -41,18 +71,29 @@ class Signmaker {
     return $output;
   }
 
-  public static function generate($html) {
-    $dompdf = new Dompdf();
+  public static function generate($html, $output = 'output', $additional_chroot = []) {
+    $options = new Options();
+    $options->setIsRemoteEnabled(true);
+    $options->setChroot(array_merge([__DIR__ . '../assets/css'], $additional_chroot));
+    $options->setDefaultMediaType('print');
+//    $options->setDebugLayout(true);
+    $dompdf = new Dompdf($options);
     $dompdf->loadHtml($html);
 
     // (Optional) Setup the paper size and orientation
     $dompdf->setPaper('letter', 'landscape');
 
+
     // Render the HTML as PDF
     $dompdf->render();
 
-    // Output the generated PDF to Browser
-    return $dompdf->stream();
+    if ('stream' == $output) {
+        return $dompdf->stream();
+    } else if ('output' === $output) {
+        return $dompdf->output();
+    }
+
+    return $dompdf;
   }
 
   public static function getConfiguration() {
@@ -74,7 +115,7 @@ class Signmaker {
         $background = $file;
       } else {
         // TODO add https://github.com/shanept/MimeSniffer/
-        $images[] = $file;
+        $images[] = trim($file, '/');
       }
     }
     if (!$background) {
@@ -92,12 +133,18 @@ class Signmaker {
       throw new \Exception('Bbox must be 4 percentages separated by commas: Top,Left,Bottom,Right');
     }
     $bbox = array_map('intval', $bbox);
+    if (isset($_GET['stylesheets'])) {
+        $stylesheets = array_map('urldecode', explode(',', $_GET['stylesheets']));
+    } else {
+        $stylesheets = [];
+    }
     $configuration = [
-      'directory' => '/' . trim($directory, '/') . '/',
+      'directory' => trim($directory, '/') . '/',
       'bbox' => $bbox,
       'images' => $images,
       'background' => $background,
       'root' => $root,
+      'stylesheets' => $stylesheets,
     ];
     return $configuration;
   }
