@@ -15,7 +15,7 @@ function recalculate() {
         childCount++;
         const url = li.dataset.url;
         const sticker = document.createElement('span');
-        sticker.style.backgroundImage = `url(${url})`;
+        sticker.style.backgroundImage = `url("${url}")`;
         currentRow.appendChild(sticker);
         itemsInRow++;
         if (itemsInRow === ITEMS_PER_ROW) {

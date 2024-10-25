@@ -21,6 +21,9 @@ class Signmaker {
         <?php endforeach; ?>
         <script src="<?php echo $configuration['root']; ?>/assets/js/signmaker.js"></script>
         <style>
+            #replacement-placeholder {}
+        </style>
+        <style>
             #image-region {
                 top: <?php echo (($top / 100) * 8.5); ?>in;
                 right: <?php echo ((1 - $right / 100) * 8.5); ?>in;
@@ -74,10 +77,11 @@ class Signmaker {
   public static function generate($html, $output = 'output', $additional_chroot = []) {
     $options = new Options();
     $options->setIsRemoteEnabled(true);
-    $options->setChroot(array_merge([__DIR__ . '../assets/css'], $additional_chroot));
+    $options->setChroot(array_merge([__DIR__ . '/../assets/css'], $additional_chroot));
     $options->setDefaultMediaType('print');
-//    $options->setDebugLayout(true);
     $dompdf = new Dompdf($options);
+    // TODO account for all stylesheets. for some reason the links don't work
+    $html = str_replace('#replacement-placeholder {}', file_get_contents(__DIR__ . '/../assets/css/style.css'), $html);
     $dompdf->loadHtml($html);
 
     // (Optional) Setup the paper size and orientation
