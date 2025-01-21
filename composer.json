@@ -4,7 +4,7 @@
 	"description": "PHP application for generating refuse signs from configuration. Used with UI",
 	"homepage": "https://git.fivepaths.com/fivepaths/signmaker",
 	"type": "library",
-	"license": "GPL",
+	"license": "GPL-3.0-or-later",
 	"authors": [
 		{
 			"name": "Tyler Brown Cifu Shuster",
