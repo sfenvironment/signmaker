@@ -1,8 +1,8 @@
 {
-	"name": "sf/signmaker",
+	"name": "sfenvironment/signmaker",
 	"version": "0.0.1",
 	"description": "PHP application for generating refuse signs from configuration. Used with UI",
-	"homepage": "https://git.fivepaths.com/sf/signmaker",
+	"homepage": "https://git.fivepaths.com/fivepaths/signmaker",
 	"type": "library",
 	"license": "GPL",
 	"authors": [
@@ -17,7 +17,7 @@
 	},
 	"autoload": {
 		"psr-4": {
-			"SF\\Signmaker\\": "src/"
+			"SFEnvironment\\Signmaker\\": "src/"
 		}
 	}
 }

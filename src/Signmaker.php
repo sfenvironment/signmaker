@@ -1,6 +1,6 @@
 <?php
 
-namespace SF\Signmaker;
+namespace SFEnvironment\Signmaker;
 
 use Dompdf\Dompdf;
 use Dompdf\Options;
