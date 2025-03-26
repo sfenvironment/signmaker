@@ -1,12 +1,12 @@
 # SFEnvironment Signmaker
 
-This PHP application generates printable signs for bin organization using user-selected images and a specified background. It leverages Dompdf to convert HTML into PDF for printing.
+This PHP application generates printable signs for organizing refuse into bins. You provide it with a background and images of items that the user can select. It leverages Dompdf to convert HTML into PDF for printing.
 
 ## Overview
 
 The Signmaker application allows users to create custom signs by selecting images from a specified directory and placing them on a background image within defined bounding box coordinates. The application then generates a PDF of the created sign, suitable for printing.
 
-This project is designed to be used in conjunction with a service that can dynamically assemble the necessary parameters, but the parameters can be passed manually as documented below.
+This project is designed to be used in conjunction with a service such as `sfenvironment/signmaker_ui`, a Drupal module, that can dynamically assemble the necessary parameters, but the parameters can be passed manually as documented below.
 
 ## Features
 
